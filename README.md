@@ -141,6 +141,87 @@ runtime tools. Example for WhatsApp:
 - `render_math` is the only way the agent can do any host-side work.
 - `message` lets the agent send the resulting PNG back to the group.
 
+## Companion skill (optional but recommended)
+
+The plugin only exposes the `render_math` tool — it does not tell the agent
+_when_ to use it. For best results, drop the following skill alongside your
+other skills so the agent knows to prefer `render_math` over raw LaTeX
+replies on channels that can't render math.
+
+Save as `~/.openclaw/skills/math-images/SKILL.md`
+(or any directory listed in `skills.load.extraDirs`):
+
+````markdown
+---
+name: math-equation-images
+description: Render LaTeX/TeX math equations as PNG images and send them back through the current channel. Triggered when the user asks for math, formulas, equations, matrices or anything LaTeX-ish to be shown as an image — especially on channels that cannot render math natively (WhatsApp, Signal, SMS, IRC). Supports dark (default) and light themes.
+---
+
+# Math Equation Images
+
+Render LaTeX math as PNG images using the **`render_math` tool**.
+
+## Tool
+
+Use the `render_math` tool. Do NOT shell out to `math2img`, `tex`, or any
+binary. The tool is the only supported path and works in group chats where
+`exec` is denied.
+
+## Parameters
+
+- `latex` (required) — the LaTeX source. Can contain one or more equations in
+  `$...$`, `$$...$$` or `\[...\]` form. Plain text around the math is fine;
+  only equations are extracted.
+- `theme` — `"dark"` (default) or `"light"`. Use `light` if the user asks for
+  light mode, white background, bright theme, etc.
+- `fontSize` — points, default 24. Only set if the user asks for bigger or
+  smaller.
+- `scale` — render scale, default 3.0. Only set if the user asks.
+
+## Workflow
+
+1. Call `render_math` with the LaTeX source.
+2. The tool returns a JSON result like:
+
+   ```json
+   {
+     "ok": true,
+     "theme": "dark",
+     "count": 2,
+     "images": [
+       { "path": "/tmp/openclaw-render-math-xyz/equation_0001.png", "bytes": 18432 },
+       { "path": "/tmp/openclaw-render-math-xyz/equation_0002.png", "bytes": 21004 }
+     ]
+   }
+   ```
+
+3. For **each** image path, call the `message` tool on the current channel:
+
+   - `action: "send"`
+   - `channel: <current channel, e.g. "whatsapp">`
+   - `target: <current conversation target>`
+   - `media: <path from the tool result>`
+   - `caption: "Equation 1"`, `"Equation 2"`, ...
+
+   Send them in order.
+
+4. If `ok: false`, tell the user what went wrong (most common: "No math
+   equations found in the provided LaTeX" — ask them to wrap the math in
+   `$...$` or `$$...$$`).
+
+## When to use
+
+**Always** use this skill when:
+
+- the user asks you to render/show/draw math, a formula, an equation, a
+  matrix, a proof, …
+- your answer would otherwise contain raw `$...$` or `\[...\]` on a channel
+  that can't render math (WhatsApp, Signal, SMS, IRC).
+
+Do NOT reply with raw LaTeX source on those channels — render and send
+images instead.
+````
+
 ## Using it
 
 Just ask the agent for math. The model will pick up `render_math` from its
