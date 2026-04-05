@@ -1,0 +1,52 @@
+{
+  "id": "render-math",
+  "name": "Render Math",
+  "description": "Renders LaTeX math equations to PNG images. Safe alternative to giving the agent exec permission just for math rendering.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "binary": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Path to the math2img binary. Defaults to ~/.openclaw/skills/math-images/scripts/math2img."
+      },
+      "outputDir": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Directory for rendered PNGs. Defaults to a temp directory."
+      },
+      "defaultTheme": {
+        "type": "string",
+        "enum": ["dark", "light"],
+        "description": "Default color theme for rendered equations."
+      },
+      "timeoutSeconds": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 120,
+        "description": "Timeout for math2img invocations."
+      }
+    }
+  },
+  "uiHints": {
+    "binary": {
+      "label": "math2img binary path",
+      "help": "Absolute path to the math2img executable."
+    },
+    "outputDir": {
+      "label": "Output directory",
+      "help": "Where rendered PNGs are written. Must be inside the agent media allowlist.",
+      "advanced": true
+    },
+    "defaultTheme": {
+      "label": "Default theme",
+      "help": "dark or light — user can override per call."
+    },
+    "timeoutSeconds": {
+      "label": "Render timeout (seconds)",
+      "help": "Max time math2img may run before the call fails.",
+      "advanced": true
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@sttts/openclaw-render-math",
+  "version": "0.1.0",
+  "description": "OpenClaw plugin that renders LaTeX math equations to PNG images via math2img",
+  "type": "module",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "openclaw.plugin.json",
+    "README.md"
+  ],
+  "openclaw": {
+    "extensions": [
+      "./index.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sttts/openclaw-render-math.git"
+  },
+  "license": "MIT",
+  "author": "Stefan Schimanski"
+}
