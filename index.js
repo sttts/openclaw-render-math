@@ -209,7 +209,7 @@ export default {
           };
         },
       }),
-      { name: "render_math", optional: true },
+      { name: "render_math" },
     );
   },
 };
