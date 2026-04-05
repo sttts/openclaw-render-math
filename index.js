@@ -1,4 +1,9 @@
-import { definePluginEntry } from "openclaw/plugin-sdk/plugin-entry";
+// We intentionally do NOT import `definePluginEntry` from the openclaw
+// package — that would require the plugin to have openclaw as a dependency
+// in its own node_modules, which is not the case when installed via a bare
+// `git clone`. `definePluginEntry` is just an identity function for type
+// hints, so we can export the same shape directly as the default export
+// and the OpenClaw plugin loader picks it up.
 import { spawn } from "node:child_process";
 import { mkdtemp, mkdir, writeFile, readdir, stat } from "node:fs/promises";
 import { tmpdir, homedir } from "node:os";
@@ -108,7 +113,7 @@ async function listPngs(dir) {
   return pngs;
 }
 
-export default definePluginEntry({
+export default {
   id: "render-math",
   name: "Render Math",
   description: "Renders LaTeX math equations to PNG images without granting exec permission.",
@@ -207,4 +212,4 @@ export default definePluginEntry({
       { name: "render_math", optional: true },
     );
   },
-});
+};
